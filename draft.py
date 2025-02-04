@@ -792,7 +792,7 @@ class MainPage(QMainWindow):
             period, summa = zip(*self.period_sum_list)
 
             # Указываем шрифт Involve
-            font_path = "content/fonts/Involve-Regular.ttf"
+            font_path = "fonts/Involve-Regular.ttf"
             font_prop = fm.FontProperties(fname=font_path, size=8)
 
             # Применяем шрифт ко всем текстовым элементам
@@ -1880,7 +1880,7 @@ class NewAccountsWindow(QMainWindow):
                                                     "background-color: rgb(242, 233, 228);\n"
                                                     "border-radius: 15px;")
                 account_type_dropdown.addItems(
-                    ["Карточный счёт", "Текущий счёт", "Резервный счёт", "Накопительный счёт", "Валюта", "Вклад",
+                    ["Карточный счёт", "Текущий счёт", "Резервный счёт", "Накопительный счёт", "Валютный счёт", "Вклад",
                      "Займ"])
                 account_type_dropdown.setFixedHeight(30)
                 account_type_dropdown.setFixedWidth(190)
@@ -2748,8 +2748,8 @@ class MyAccountHistoryWindow(QMainWindow):
                         if prev_row_c[4] == cur_row_c[4]:
                             result_amount_c = f"{prev_row_c[6]:.2f}"
                             break
-                    current_row_c.append(f"{result_amount_c} $")
-                    current_row_c.append(f"{cur_row_c[6]:.2f} $")
+                    current_row_c.append(f"{result_amount_c}")
+                    current_row_c.append(f"{cur_row_c[6]:.2f}")
                     third_section_data.append(tuple(current_row_c))
                     c += 1
 
@@ -2799,7 +2799,7 @@ class MyAccountHistoryWindow(QMainWindow):
                 first_section = ('1. Счета', '', '')                             # Коды: 21
                 second_section = ('2. Сбережения', '', '')                       # Коды: 31, 41, 51, 91
                 third_section = ('3. Валюта', '', '')                            # Коды: 11
-                fourth_section = ('4. Обязательства', '', '')                     # Коды: 4
+                fourth_section = ('4. Обязательства', '', '')                    # Коды: 4
                 # - пустая строка для перехода между разделами
                 empty_row = ('', '', '')
 
@@ -2874,7 +2874,9 @@ class MyAccountHistoryWindow(QMainWindow):
                     # - записи по счетам по третьему разделу
                     total_rows.append(third_section)
                     if third_section_data:
+                        print(f"third_section_data: {third_section_data}")
                         for data in third_section_data:
+                            print(f"data: {data}")
                             total_rows.append(data)
                             cur_sum_third_section += round(float(data[2]), 2)
                             prev_sum_third_section += round(float(data[1]), 2)
