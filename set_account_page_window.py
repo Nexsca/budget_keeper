@@ -156,7 +156,8 @@ class Ui_SetAccountPage(object):
                                                 "background-color: rgb(242, 233, 228);\n"
                                                 "border-radius: 15px;")
             account_type_dropdown.addItems(
-                ["Карточный счёт", "Текущий счёт", "Резервный счёт", "Накопительный счёт", "Вклад", "Валюта", "Займ"])
+                ["Карточный счёт", "Текущий счёт", "Резервный счёт", "Накопительный счёт", "Вклад", "Валютный счёт",
+                 "Займ"])
             account_type_dropdown.setFixedHeight(30)
             account_type_dropdown.setFixedWidth(200)
 
