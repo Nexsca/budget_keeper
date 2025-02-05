@@ -811,6 +811,7 @@ class MainPage(QMainWindow):
             # Рисуем график
             self.canvas.ax.bar(period, summa, color=colours, width=0.2)
             self.canvas.ax.set_xlabel('\nПериоды', fontsize=10, fontproperties=font_prop)
+            self.canvas.ax.tick_params(axis='x', labelrotation=25)
             self.canvas.ax.set_ylabel('Сумма денежных средств,\n руб.', fontsize=10, fontproperties=font_prop)
             self.canvas.ax.grid(visible=False)
 
