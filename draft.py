@@ -108,7 +108,7 @@ class MainMenu(QMainWindow):
         super().__init__()
 
         # Устанавливаем иконку для окна
-        self.setWindowIcon(QIcon('app_icon.ico'))
+        self.setWindowIcon(QIcon('content/app_icon.ico'))
 
         # Импортируем интерфейс
         self.ui = Ui_MainMenuWindow()
@@ -139,7 +139,7 @@ class LoginPage(QMainWindow):
         super().__init__()
 
         # Устанавливаем иконку для окна
-        self.setWindowIcon(QIcon('app_icon.ico'))
+        self.setWindowIcon(QIcon('content/app_icon.ico'))
 
         # Для работы с бд
         self.db_conn = DatabaseConn()
@@ -225,7 +225,7 @@ class RegisterPage(QMainWindow):
         super().__init__()
 
         # Устанавливаем иконку для окна
-        self.setWindowIcon(QIcon('app_icon.ico'))
+        self.setWindowIcon(QIcon('content/app_icon.ico'))
 
         # Для работы с бд
         self.db_conn = DatabaseConn()
@@ -339,7 +339,7 @@ class AnketaPage(QMainWindow):
         super().__init__()
 
         # Устанавливаем иконку для окна
-        self.setWindowIcon(QIcon('app_icon.ico'))
+        self.setWindowIcon(QIcon('content/app_icon.ico'))
 
         # Для работы с бд
         self.db_conn = DatabaseConn()
@@ -436,7 +436,7 @@ class WelcomePage(QMainWindow):
         super().__init__()
 
         # Устанавливаем иконку для окна
-        self.setWindowIcon(QIcon('app_icon.ico'))
+        self.setWindowIcon(QIcon('content/app_icon.ico'))
 
         # Для директивного обращения к странице
         self.user_id = user_id
@@ -462,7 +462,7 @@ class SetAccountPage(QMainWindow):
         super().__init__()
 
         # Устанавливаем иконку для окна
-        self.setWindowIcon(QIcon('app_icon.ico'))
+        self.setWindowIcon(QIcon('content/app_icon.ico'))
 
         # Для работы с бд
         self.db_conn = DatabaseConn()
@@ -582,7 +582,7 @@ class MainPage(QMainWindow):
         super(MainPage, self).__init__(parent)
 
         # Устанавливаем иконку для окна
-        self.setWindowIcon(QIcon('app_icon.ico'))
+        self.setWindowIcon(QIcon('content/app_icon.ico'))
 
         # Для работы с бд
         self.db_conn = DatabaseConn()
@@ -792,7 +792,7 @@ class MainPage(QMainWindow):
             period, summa = zip(*self.period_sum_list)
 
             # Указываем шрифт Involve
-            font_path = "fonts/Involve-Regular.ttf"
+            font_path = "content/fonts/Involve-Regular.ttf"
             font_prop = fm.FontProperties(fname=font_path, size=8)
 
             # Применяем шрифт ко всем текстовым элементам
@@ -881,7 +881,7 @@ class NewMonthPage(QMainWindow):
         super().__init__()
 
         # Устанавливаем иконку для окна
-        self.setWindowIcon(QIcon('app_icon.ico'))
+        self.setWindowIcon(QIcon('content/app_icon.ico'))
 
         # Для работы с бд
         self.db_conn = DatabaseConn()
@@ -1116,7 +1116,7 @@ class MyProfilePage(QMainWindow):
         super().__init__()
 
         # Устанавливаем иконку для окна
-        self.setWindowIcon(QIcon('app_icon.ico'))
+        self.setWindowIcon(QIcon('content/app_icon.ico'))
 
         # Для работы с бд
         self.db_conn = DatabaseConn()
@@ -1399,7 +1399,7 @@ class ConfirmPasswordWindow(QDialog):
         super().__init__(parent)
 
         # Устанавливаем иконку для окна
-        self.setWindowIcon(QIcon('app_icon.ico'))
+        self.setWindowIcon(QIcon('content/app_icon.ico'))
 
         # Для работы с бд
         self.db_conn = DatabaseConn()
@@ -1460,7 +1460,7 @@ class MyAccountsPage(QMainWindow):
         super().__init__()
 
         # Устанавливаем иконку для окна
-        self.setWindowIcon(QIcon('app_icon.ico'))
+        self.setWindowIcon(QIcon('content/app_icon.ico'))
 
         # Для работы с бд
         self.db_conn = DatabaseConn()
@@ -1669,7 +1669,7 @@ class ConfirmDeleteAccount(QMainWindow):
         super().__init__()
 
         # Устанавливаем иконку для окна
-        self.setWindowIcon(QIcon('app_icon.ico'))
+        self.setWindowIcon(QIcon('content/app_icon.ico'))
 
         # Для работы с бд
         self.db_conn = DatabaseConn()
@@ -1731,7 +1731,7 @@ class SuccessDeleteWindow(QMainWindow):
         super().__init__()
 
         # Устанавливаем иконку для окна
-        self.setWindowIcon(QIcon('app_icon.ico'))
+        self.setWindowIcon(QIcon('content/app_icon.ico'))
 
         # Для директивного обращения к странице
         self.user_id = user_id
@@ -1781,7 +1781,7 @@ class NewAccountsWindow(QMainWindow):
         super().__init__()
 
         # Устанавливаем иконку для окна
-        self.setWindowIcon(QIcon('app_icon.ico'))
+        self.setWindowIcon(QIcon('content/app_icon.ico'))
 
         # Для работы с бд
         self.db_conn = DatabaseConn()
@@ -2044,7 +2044,7 @@ class EditAccountsWindow(QMainWindow):
         super().__init__()
 
         # Устанавливаем иконку для окна
-        self.setWindowIcon(QIcon('app_icon.ico'))
+        self.setWindowIcon(QIcon('content/app_icon.ico'))
 
         # Для работы с бд
         self.db_conn = DatabaseConn()
@@ -2292,7 +2292,7 @@ class MyAccountHistoryWindow(QMainWindow):
         super().__init__()
 
         # Устанавливаем иконку для окна
-        self.setWindowIcon(QIcon('app_icon.ico'))
+        self.setWindowIcon(QIcon('content/app_icon.ico'))
 
         # Для работы с бд
         self.db_conn = DatabaseConn()
@@ -3049,7 +3049,7 @@ class HelpPageWindow(QMainWindow):
         super().__init__()
 
         # Устанавливаем иконку для окна
-        self.setWindowIcon(QIcon('app_icon.ico'))
+        self.setWindowIcon(QIcon('content/app_icon.ico'))
 
         # Для работы с бд
         self.db_conn = DatabaseConn()
@@ -3181,7 +3181,7 @@ class ConfirmPageWindow(QMainWindow):
         super().__init__()
 
         # Устанавливаем иконку для окна
-        self.setWindowIcon(QIcon('app_icon.ico'))
+        self.setWindowIcon(QIcon('content/app_icon.ico'))
 
         # Импортируем интерфейс
         self.ui = Ui_ConfirmPageWindow()
