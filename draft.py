@@ -73,7 +73,7 @@ class DatabaseConn:
     def execute_query(self, query, params=(), fetchone=False, fetchall=False):
         conn = self.connect()
         cursor = conn.cursor()
-        logger.info(f"Выполнение запроса к базе данных: '{query}', параметры: '{params}'")
+        logger.info(f"Выполнение запроса к базе данных: '{query}'")
         try:
             cursor.execute(query, params)
             conn.commit()
@@ -156,7 +156,7 @@ class LoginPage(QMainWindow):
     def check_login(self):
         login = self.ui.login_input.text()
         password = self.ui.password_input.text()
-        logger.info(f"Выполняется вход в профиль, логин: '{login}', пароль: '{password}'")
+        logger.info(f"Выполняется вход в профиль, логин: '{login}', пароль: '[HIDDEN]'")
 
         # Проверки введённых данных
         if not login:
@@ -206,7 +206,7 @@ class LoginPage(QMainWindow):
         except Exception as syserr3:
             logger.error(f"Ошибка поиска указанного пользователя в базе данных, "
                          f"логин: '{login}', "
-                         f"пароль: '{password}', "
+                         f"пароль: '[HIDDEN]', "
                          f"детали: '{syserr3}'")
             self.ui.error_label.setText("Возникла ошибка базы данных, обратись к администратору")
             return
@@ -242,7 +242,7 @@ class RegisterPage(QMainWindow):
     def register_user(self):
         login = self.ui.login_input.text()
         password = self.ui.password_input.text()
-        logger.info(f"Выполняется регистрация нового пользователя, логин: '{login}', пароль: '{password}'")
+        logger.info(f"Выполняется регистрация нового пользователя, логин: '{login}', пароль: '[HIDDEN]'")
 
         # Проверка на корректность заполнения полей при регистрации
         if not login:
@@ -304,17 +304,17 @@ class RegisterPage(QMainWindow):
             result = self.db_conn.execute_query(get_id_query, params=(login,), fetchone=True)
             logger.info(f"Пользователь успешно зарегистрирован, "
                         f"логин: '{login}', "
-                        f"пароль: '{password}'")
+                        f"пароль: '[HIDDEN]'")
             return result[0]
         except sqlite3.Error as sqlerr2:
             logger.error(f"Ошибка базы данных при регистрации указанного пользователя, "
                          f"логин: '{login}', "
-                         f"пароль: '{password}, "
+                         f"пароль: '[HIDDEN]', "
                          f"детали: '{sqlerr2}'")
         except Exception as syserr5:
             logger.error(f"Ошибка регистрации указанного пользователя в базе данных, "
                          f"логин: '{login}', "
-                         f"пароль: '{password}, "
+                         f"пароль: '[HIDDEN]', "
                          f"детали: '{syserr5}'")
             self.ui.error_label.setText(f"Возникла ошибка базы данных, обратись к администратору")
 
@@ -1193,7 +1193,7 @@ class MyProfilePage(QMainWindow):
             self.ui.income_line.setText(income)
             logger.info(f"Данные для пользователя успешно заполнены, "
                         f"логин: '{login}', "
-                        f"пароль: '{password}', "
+                        f"пароль: '[HIDDEN]', "
                         f"имя: '{firstname}', "
                         f"фамилия: '{surname}', "
                         f"доход: '{income}'")
@@ -1300,7 +1300,7 @@ class MyProfilePage(QMainWindow):
             logger.info(f"Сохранение данных пользователя прошло успешно, "
                         f"user_id: '{self.user_id}', "
                         f"логин: '{self.input_login}', "
-                        f"пароль: '{self.input_password}', "
+                        f"пароль: '[HIDDEN]', "
                         f"имя: '{self.input_firstname}', "
                         f"фамилия: '{self.input_surname}', "
                         f"доход: '{self.input_parsed_income}', "
@@ -1450,7 +1450,7 @@ class ConfirmPasswordWindow(QDialog):
             self.ui.error_label.setText(f"Возникла ошибка базы данных, обратись к администратору")
             logger.error(f"Возникла ошибка при выполнении проверки корректности введённого пароля, "
                          f"user_id: '{self.user_id}', "
-                         f"пароль: '{password}', "
+                         f"пароль: '[HIDDEN]', "
                          f"детали: '{syserr17}'")
             return
 
@@ -3250,8 +3250,8 @@ if __name__ == "__main__":
         logger.info(f"Шрифт 'Involve' не был найден в системе")
 
         # Путь к шрифту
-        font_reg_path = os.path.join(os.path.dirname(__file__), "fonts", "Involve-Regular.ttf")
-        font_semi_bold_path = os.path.join(os.path.dirname(__file__), "fonts", "Involve-SemiBold.ttf")
+        font_reg_path = os.path.join(os.path.dirname(__file__), "content/fonts", "Involve-Regular.ttf")
+        font_semi_bold_path = os.path.join(os.path.dirname(__file__), "content/fonts", "Involve-SemiBold.ttf")
 
         # Попытка установки regular шрифта
         load_custom_font(font_reg_path, font_semi_bold_path,"Involve", "Involve SemiBold")
