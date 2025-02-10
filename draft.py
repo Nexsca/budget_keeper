@@ -838,7 +838,7 @@ class MainPage(QMainWindow):
     # Метод для перехода к записи данных по счетам за месяц
     def new_month_button(self):
         logger.info(f"Открытие страницы для записи нового месяца для пользователя: '{self.user_id}'")
-        self.new_page = NewMonthPage(self.user_id)
+        self.new_page = NewMonthPage(self.user_id, parent_window=self)
         self.new_page.show()
 
     # Метод для перехода к странице профиля пользователя
@@ -878,7 +878,7 @@ class MainPage(QMainWindow):
 
 # Страница записи данных месяца
 class NewMonthPage(QMainWindow):
-    def __init__(self, user_id):
+    def __init__(self, user_id, parent_window=None):
         super().__init__()
 
         # Устанавливаем иконку для окна
@@ -896,6 +896,9 @@ class NewMonthPage(QMainWindow):
         # Импортируем интерфейс
         self.ui = Ui_NewMonthWindow()
         self.ui.setupUi(self)
+
+        # Для учёта страницы-родителя
+        self.parent_window = parent_window
 
         # Настраиваем таблицу счетов
         self.setup_table()
@@ -1066,7 +1069,7 @@ class NewMonthPage(QMainWindow):
 
                 logger.info(f"Все данные по счетам успешно записаны в базу данных для пользователя: '{self.user_id}'")
                 self.ui.error_label.setText(f"Данные по счетам успешно сохранены, страница сейчас закроется")
-                QTimer.singleShot(2500, self.close_after_delay)
+                QTimer.singleShot(1500, self.close_after_delay)
             except Exception as syserr64:
                 logger.error(f"Возникла ошибка при попытке записи данных в базу данных, "
                              f"данные по счетам: '{data_to_save}', "
@@ -1103,7 +1106,10 @@ class NewMonthPage(QMainWindow):
 
     # Метод для автоматического закрытия окна ввода данных по счетам
     def close_after_delay(self):
+        self.main_page = MainPage(self.user_id, parent=None)
+        self.main_page.show()
         self.close()
+        self.parent_window.close()
 
     # Метод для возврата на главную страницу
     def back_to_main(self):
