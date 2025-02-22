@@ -102,6 +102,33 @@ class DatabaseConn:
             logger.info(f"Подключение к базе данных закрыто: '{self.db_name}'")
 
 
+# Статический метод парсинга введённого числового значения
+def pars_value(input_value):
+    logger.info(f"Выполняется запрос на парсинг числового значения: '{input_value}'")
+    cleaned_value = input_value
+    try:
+        cleaned_value = cleaned_value.replace(" ", "")
+        if "," in input_value:
+            cleaned_value = input_value.replace(",", ".")
+            cleaned_value = cleaned_value.replace(" ", "")
+
+        parsed_value = float(cleaned_value)
+        logger.info(f"Запрос на парсинг числового значения успешно выполнен, "
+                    f"введённое значение: '{input_value}', "
+                    f"полученное значение: '{parsed_value}'")
+        return float(parsed_value)
+    except ValueError as syserr111:
+        logger.warning(f"Запрос на парсинг числового значения не выполнен, "
+                       f"введённое значение: '{input_value}', "
+                       f"детали: '{syserr111}'")
+        return -2
+    except Exception as syserr01:
+        logger.error(f"Запрос на парсинг числового значения не выполнен, "
+                     f"введённое значение: '{input_value}', "
+                     f"детали: '{syserr01}'")
+        return -1
+
+
 # Страница главного меню - первая страница приложения, пользователь может выбрать функцию входа или регистрации
 class MainMenu(QMainWindow):
     def __init__(self):
@@ -367,16 +394,18 @@ class AnketaPage(QMainWindow):
             return
 
         # Если доход введён, парсим при необходимости
-        try:
-            if not_parsed_income:
-                parsed_income = self.parse_income_input(not_parsed_income)
-            else:
-                parsed_income = not_parsed_income
-        except Exception as syserr45:
-            logger.warning(f"Неуспешная попытка парсинга: введено некорректное значение дохода, "
-                           f"детали: '{syserr45}'")
-            self.ui.error_label.setText(f"Похоже, ты ввёл некорректное значение дохода, пример: 10000,00")
-            return
+        if not_parsed_income:
+            parsed_income = pars_value(not_parsed_income)
+
+            # Проверка результата парсинга
+            if parsed_income == -2:
+                self.ui.error_label.setText(f"Похоже, ты ввёл некорректное значение дохода, вот пример: 10000,00")
+                return
+            elif parsed_income == -1:
+                self.ui.error_label.setText(f"Похоже, возникла ошибка обработки, обратись к администратору")
+                return
+        else:
+            parsed_income = not_parsed_income
 
         # Сохраняем данные пользователя в базе данных
         try:
@@ -396,31 +425,6 @@ class AnketaPage(QMainWindow):
                          f"текущий доход: '{not_parsed_income}', "
                          f"детали: '{syserr6}'")
             self.ui.error_label.setText(f"Возникла ошибка базы данных, обратись к администратору")
-
-    # Метод для парсинга введённого значения дохода
-    def parse_income_input(self, input_income):
-        try:
-            # Обрабатываем пробелы
-            cleaned_income = input_income.replace(" ", "")
-
-            # Обрабатываем запятые, меняем на точки
-            if "," in input_income:
-                cleaned_income = input_income.replace(",", ".")
-                return cleaned_income
-            logger.info(f"Выполнен парсинг пароля: "
-                        f"исходное значение: '{input_income}', "
-                        f"значение на выходе: '{cleaned_income}', "
-                        f"итоговое значение: '{float(cleaned_income)}'")
-            return float(cleaned_income)
-        except ValueError as syserr7:
-            logger.error(f"Ошибка парсинга, некорректно введено значение дохода: '{input_income}', "
-                         f"детали: '{syserr7}'")
-            self.ui.error_label.setText("Введи корректное числовое значение дохода, например: 50000.00")
-            raise
-        except Exception as syserr8:
-            logger.error(f"Ошибка парсинга, "
-                         f"детали: '{syserr8}'")
-            raise
 
     # Метод для перехода к странице с приветствием после задержки
     def welcome_after_delay(self):
@@ -1023,8 +1027,16 @@ class NewMonthPage(QMainWindow):
                 account_amount = value_input.text().strip()
 
                 # Парсим значение суммы для счёта
-                logger.info(f"Выполняется парсинг введённой суммы на счёте: '{account_amount}'")
-                self.parsed_amount = self.parse_amount_input(account_amount)
+                # logger.info(f"Выполняется парсинг введённой суммы на счёте: '{account_amount}'")
+                self.parsed_amount = pars_value(account_amount)
+
+                # Проверка результата парсинга
+                if self.parsed_amount == -2:
+                    self.ui.error_label.setText(f"Введи корректное числовое значение дохода, например: 50000,00")
+                    return
+                elif self.parsed_amount == -1:
+                    self.ui.error_label.setText(f"Похоже, возникла ошибка обработки, обратись к администратору")
+                    return
 
                 # Собираем оставшиеся параметры для счёта пользователя - айди счёта и код типа счёта
                 try:
@@ -1081,28 +1093,6 @@ class NewMonthPage(QMainWindow):
             logger.error(f"Возникла ошибка при сохранении данных по счёту пользователя, "
                          f"user_id: '{self.user_id}', "
                          f"детали: '{syserr24}'")
-
-    # Метод для парсинга введённого значения суммы на счёте
-    def parse_amount_input(self, account_amount):
-        cleaned_amount = account_amount
-        try:
-            cleaned_amount = cleaned_amount.replace(" ", "")
-            if "," in account_amount:
-                cleaned_amount = account_amount.replace(",", ".")
-
-            parsed_amount = float(cleaned_amount)
-            logger.info(f"Выполнен парсинг пароля: "
-                        f"исходное значение: '{account_amount}', "
-                        f"значение на выходе: '{cleaned_amount}', "
-                        f"итоговое значение: '{parsed_amount}'")
-            return parsed_amount
-        except ValueError as syserr17:
-            logger.error(f"Ошибка парсинга, некорректно введено значение дохода: '{account_amount}', "
-                         f"детали: '{syserr17}'")
-            self.ui.error_label.setText("Введи корректное числовое значение дохода, например: 50000,00")
-        except Exception as syserr28:
-            logger.error(f"Ошибка парсинга, "
-                         f"детали: '{syserr28}'")
 
     # Метод для автоматического закрытия окна ввода данных по счетам
     def close_after_delay(self):
@@ -1278,9 +1268,16 @@ class MyProfilePage(QMainWindow):
             return
 
         # Доход обязательно парсим, если введён
-        logger.info(f"Выполняется парсинг введённого значения дохода")
-        if input_income:
-            self.input_parsed_income = self.parse_income_input(input_income)
+        if input_income and input_income != "-":
+            self.input_parsed_income = pars_value(input_income)
+
+            # Проверка результата парсинга
+            if self.input_parsed_income == -2:
+                self.ui.error_label.setText(f"Похоже, ты ввёл некорректное значение дохода, вот пример: 10000,00")
+                return
+            elif self.input_parsed_income == -1:
+                self.ui.error_label.setText(f"Похоже, возникла ошибка обработки, обратись к администратору")
+                return
         else:
             self.input_parsed_income = input_income
 
@@ -1325,28 +1322,6 @@ class MyProfilePage(QMainWindow):
     # Метод для обновления данных пользователя после сохранения
     def update_after_delay(self):
         self.get_users_data()
-
-    # Метод для парсинга введённого значения дохода
-    def parse_income_input(self, income):
-        cleaned_income = income
-        try:
-            cleaned_income = cleaned_income.replace(" ", "")
-            if "," in income:
-                cleaned_income = income.replace(",", ".")
-
-            parsed_income = float(cleaned_income)
-            logger.info(f"Выполнен парсинг пароля: "
-                        f"исходное значение: '{income}', "
-                        f"значение на выходе: '{cleaned_income}', "
-                        f"итоговое значение: '{parsed_income}'")
-            return parsed_income
-        except ValueError as syserr17:
-            logger.error(f"Ошибка парсинга, некорректно введено значение дохода: '{income}', "
-                         f"детали: '{syserr17}'")
-            self.ui.error_label.setText("Введи корректное числовое значение дохода, например: 50000,00")
-        except Exception as syserr28:
-            logger.error(f"Ошибка парсинга, "
-                         f"детали: '{syserr28}'")
 
     # Открытие специального окна-подтверждения для отображения пароля
     def confirm_showing_pass(self):
