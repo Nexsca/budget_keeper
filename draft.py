@@ -1257,7 +1257,7 @@ class MyProfilePage(QMainWindow):
             return
 
         # Доход обязательно парсим, если введён
-        if input_income: # and input_income != "-":
+        if input_income:
             self.input_parsed_income = pars_value(input_income)
 
             # Проверка результата парсинга
