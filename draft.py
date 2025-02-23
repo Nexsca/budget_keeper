@@ -21,7 +21,6 @@ from PyQt5.QtWidgets import QAbstractItemView, QApplication, QDialog, QHBoxLayou
 from PyQt5.QtWidgets import QPushButton, QSizePolicy, QSpacerItem, QTableWidget, QTableWidgetItem, QVBoxLayout
 # Импорт UI, созданных в QtDesigner
 from main_menu_window import Ui_MainMenuWindow
-from reg_page_window import Ui_RegPageWindow
 from anketa_page_window import Ui_AnketaPageWindow
 from welcome_page_window import Ui_WelcomePageWindow
 from set_account_page_window import Ui_SetAccountPage
@@ -225,128 +224,105 @@ class MainMenu(QMainWindow):
     # Редирект на страницу регистрации
     def go_to_register(self):
         logger.info(f"Открытие страницы регистрации")
-        self.register_page = RegisterPage()
-        self.register_page.show()
-        self.close()
+        self.ui.stacked_widget.setCurrentIndex(2)
+
+        # Страница регистрации
+
+        # Метод для регистрации пользователя
+        def register_user():
+            login = self.ui.login_input_reg.text()
+            password = self.ui.password_input_reg.text()
+            logger.info(f"Выполняется регистрация нового пользователя, логин: '{login}', пароль: '[HIDDEN]'")
+
+            # Проверка на корректность заполнения полей при регистрации
+            if not login:
+                self.ui.error_label_reg.setText("Введи, пожалуйста, логин пользователя")
+                logger.warning(f"Неуспешная попытка регистрации: не введён логин")
+                return
+
+            if " " in login:
+                self.ui.error_label_reg.setText("Логин пользователя не может содержать пробел")
+                logger.warning(f"Неуспешная попытка регистрации: логин содержит пробел")
+                return
+
+            if not password:
+                self.ui.error_label_reg.setText("Введи, пожалуйста, пароль пользователя")
+                logger.warning(f"Неуспешная попытка регистрации: не введён пароль")
+                return
+
+            if " " in password:
+                self.ui.error_label_reg.setText("Пароль пользователя не может содержать пробел")
+                logger.warning(f"Неуспешная попытка регистрации: пароль содержит пробел")
+                return
+
+            # Проверка на существование логина в базе данных
+            if check_login_exists(login):
+                logger.warning(f"Неуспешная попытка регистрации: пользователь с таким логином уже существует, "
+                               f"логин: '{login}'")
+                self.ui.error_label_reg.setText("Пользователь с таким логином уже существует")
+            else:
+                # Запись нового пользователя в базу данных
+                self.user_id = save_new_user(login, password)
+                self.ui.error_label_reg.setText("Пользователь успешно создан")
+                QTimer.singleShot(1500, anketa_after_delay)
+
+        # Проверка логина на существование в базе данных
+        def check_login_exists(login):
+            logger.info(f"Выполняется проверка логина на существование в базе данных, логин: '{login}'")
+            try:
+                query_reg = "select login from user_data where login = ?"
+                result_reg = self.db_conn.execute_query(query_reg, params=(login,), fetchone=True)
+
+                if result_reg:
+                    logger.info("Пользователь с таким логином уже существует в базе данных")
+                    return True
+                else:
+                    return False
+            except Exception as syserr4:
+                logger.error(f"Ошибка поиска указанного пользователя в базе данных, "
+                             f"логин: '{login}', "
+                             f"детали: '{syserr4}'")
+                self.ui.error_label_reg.setText(f"Возникла ошибка базы данных, обратись к администратору")
+
+        # Регистрация нового пользователя
+        def save_new_user(login, password):
+            try:
+                insert_query = "insert into user_data (login, password) values (?, ?)"
+                self.db_conn.execute_query(insert_query, params=(login, password), fetchone=True)
+
+                get_id_query = "select user_id from user_data where login = ?"
+                result = self.db_conn.execute_query(get_id_query, params=(login,), fetchone=True)
+                logger.info(f"Пользователь успешно зарегистрирован, "
+                            f"логин: '{login}', "
+                            f"пароль: '[HIDDEN]'")
+                return result[0]
+            except sqlite3.Error as sqlerr2:
+                logger.error(f"Ошибка базы данных при регистрации указанного пользователя, "
+                             f"логин: '{login}', "
+                             f"пароль: '[HIDDEN]', "
+                             f"детали: '{sqlerr2}'")
+            except Exception as syserr5:
+                logger.error(f"Ошибка регистрации указанного пользователя в базе данных, "
+                             f"логин: '{login}', "
+                             f"пароль: '[HIDDEN]', "
+                             f"детали: '{syserr5}'")
+                self.ui.error_label.setText(f"Возникла ошибка базы данных, обратись к администратору")
+
+        # Метод для перехода к странице анкеты
+        def anketa_after_delay():
+            logger.info(f"Открытие страницы анкеты для пользователя: '{self.user_id}'")
+            self.anketa_page = AnketaPage(self.user_id)
+            self.anketa_page.show()
+            self.close()
+
+        # Коннект кнопок для регистрации и возврата в меню
+        self.ui.regisrtation_button.clicked.connect(register_user)
+        self.ui.back_button_reg.clicked.connect(self.back_to_main)
 
     # Метод для возврата в главное меню
     def back_to_main(self):
         logger.info(f"Возврат в меню")
         self.ui.stacked_widget.setCurrentIndex(0)
-
-
-# Страница регистрации
-class RegisterPage(QMainWindow):
-    def __init__(self):
-        super().__init__()
-
-        # Устанавливаем иконку для окна
-        self.setWindowIcon(QIcon('content/app_icon.ico'))
-
-        # Для работы с бд
-        self.db_conn = DatabaseConn()
-
-        # Импортируем интерфейс
-        self.ui = Ui_RegPageWindow()
-        self.ui.setupUi(self)
-
-        # Коннект кнопок для регистрации и возврата в меню
-        self.ui.regisrtation_button.clicked.connect(self.register_user)
-        self.ui.back_button.clicked.connect(self.back_to_main)
-
-    # Метод для регистрации пользователя
-    def register_user(self):
-        login = self.ui.login_input.text()
-        password = self.ui.password_input.text()
-        logger.info(f"Выполняется регистрация нового пользователя, логин: '{login}', пароль: '[HIDDEN]'")
-
-        # Проверка на корректность заполнения полей при регистрации
-        if not login:
-            self.ui.error_label.setText("Введи, пожалуйста, логин пользователя")
-            logger.warning(f"Неуспешная попытка регистрации: не введён логин")
-            return
-
-        if " " in login:
-            self.ui.error_label.setText("Логин пользователя не может содержать пробел")
-            logger.warning(f"Неуспешная попытка регистрации: логин содержит пробел")
-            return
-
-        if not password:
-            self.ui.error_label.setText("Введи, пожалуйста, пароль пользователя")
-            logger.warning(f"Неуспешная попытка регистрации: не введён пароль")
-            return
-
-        if " " in password:
-            self.ui.error_label.setText("Пароль пользователя не может содержать пробел")
-            logger.warning(f"Неуспешная попытка регистрации: пароль содержит пробел")
-            return
-
-        # Проверка на существование логина в базе данных
-        if self.check_login_exists(login):
-            logger.warning(f"Неуспешная попытка регистрации: пользователь с таким логином уже существует, "
-                           f"логин: '{login}'")
-            self.ui.error_label.setText("Пользователь с таким логином уже существует")
-        else:
-            # Запись нового пользователя в базу данных
-            self.user_id = self.save_new_user(login, password)
-            self.ui.error_label.setText("Пользователь успешно создан")
-            QTimer.singleShot(1500, self.anketa_after_delay)
-
-    # Проверка логина на существование в базе данных
-    def check_login_exists(self, login):
-        logger.info(f"Выполняется проверка логина на существование в базе данных, логин: '{login}'")
-        try:
-            query = "select login from user_data where login = ?"
-            result = self.db_conn.execute_query(query, params=(login,), fetchone=True)
-
-            if result:
-                logger.info("Пользователь с таким логином уже существует в базе данных")
-                return True
-            else:
-                return False
-        except Exception as syserr4:
-            logger.error(f"Ошибка поиска указанного пользователя в базе данных, "
-                         f"логин: '{login}', "
-                         f"детали: '{syserr4}'")
-            self.ui.error_label.setText(f"Возникла ошибка базы данных, обратись к администратору")
-
-    # Регистрация нового пользователя
-    def save_new_user(self, login, password):
-        try:
-            insert_query = "insert into user_data (login, password) values (?, ?)"
-            self.db_conn.execute_query(insert_query, params=(login, password), fetchone=True)
-
-            get_id_query = "select user_id from user_data where login = ?"
-            result = self.db_conn.execute_query(get_id_query, params=(login,), fetchone=True)
-            logger.info(f"Пользователь успешно зарегистрирован, "
-                        f"логин: '{login}', "
-                        f"пароль: '[HIDDEN]'")
-            return result[0]
-        except sqlite3.Error as sqlerr2:
-            logger.error(f"Ошибка базы данных при регистрации указанного пользователя, "
-                         f"логин: '{login}', "
-                         f"пароль: '[HIDDEN]', "
-                         f"детали: '{sqlerr2}'")
-        except Exception as syserr5:
-            logger.error(f"Ошибка регистрации указанного пользователя в базе данных, "
-                         f"логин: '{login}', "
-                         f"пароль: '[HIDDEN]', "
-                         f"детали: '{syserr5}'")
-            self.ui.error_label.setText(f"Возникла ошибка базы данных, обратись к администратору")
-
-    # Метод для перехода к странице анкеты
-    def anketa_after_delay(self):
-        logger.info(f"Открытие страницы анкеты для пользователя: '{self.user_id}'")
-        self.anketa_page = AnketaPage(self.user_id)
-        self.anketa_page.show()
-        self.close()
-
-    # Редирект в меню
-    def back_to_main(self):
-        logger.info(f"Возврат в меню")
-        self.main_menu = MainMenu()
-        self.main_menu.show()
-        self.close()
 
 
 # Страница анкеты

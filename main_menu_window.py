@@ -167,9 +167,75 @@ class Ui_MainMenuWindow(object):
         self.logo_2.setGeometry(QtCore.QRect(90, 40, 240, 50))
         self.logo_2.setObjectName("logo_2")
         self.stacked_widget.addWidget(self.login_page)
-        self.page_4 = QtWidgets.QWidget()
-        self.page_4.setObjectName("page_4")
-        self.stacked_widget.addWidget(self.page_4)
+        self.reg_page = QtWidgets.QWidget()
+        self.reg_page.setObjectName("reg_page")
+        self.widget_2 = QtWidgets.QWidget(self.reg_page)
+        self.widget_2.setGeometry(QtCore.QRect(300, 210, 500, 480))
+        self.widget_2.setStyleSheet("border-radius: 15px;\n"
+"background-color: rgb(255, 255, 255);\n"
+"")
+        self.widget_2.setObjectName("widget_2")
+        self.welcome_word_3 = QtWidgets.QLabel(self.widget_2)
+        self.welcome_word_3.setGeometry(QtCore.QRect(120, 20, 260, 40))
+        self.welcome_word_3.setStyleSheet("color: rgb(34, 34, 59);\n"
+"font: 24pt \"Involve\";")
+        self.welcome_word_3.setAlignment(QtCore.Qt.AlignCenter)
+        self.welcome_word_3.setObjectName("welcome_word_3")
+        self.login_input_reg = QtWidgets.QLineEdit(self.widget_2)
+        self.login_input_reg.setGeometry(QtCore.QRect(95, 130, 360, 40))
+        self.login_input_reg.setStyleSheet("background-color: rgb(242, 233, 228);\n"
+"font: 14pt \"Involve\";\n"
+"color: rgb(34, 34, 59);")
+        self.login_input_reg.setAlignment(QtCore.Qt.AlignLeading|QtCore.Qt.AlignLeft|QtCore.Qt.AlignVCenter)
+        self.login_input_reg.setObjectName("login_input_reg")
+        self.password_input_reg = QtWidgets.QLineEdit(self.widget_2)
+        self.password_input_reg.setGeometry(QtCore.QRect(95, 190, 360, 40))
+        self.password_input_reg.setStyleSheet("background-color: rgb(242, 233, 228);\n"
+"font: 14pt \"Involve\";\n"
+"color: rgb(34, 34, 59);")
+        self.password_input_reg.setEchoMode(QtWidgets.QLineEdit.Password)
+        self.password_input_reg.setObjectName("password_input_reg")
+        self.error_label_reg = QtWidgets.QLabel(self.widget_2)
+        self.error_label_reg.setGeometry(QtCore.QRect(105, 250, 290, 50))
+        self.error_label_reg.setStyleSheet("font: 12pt \"Involve\";\n"
+"color: rgb(181, 131, 141);")
+        self.error_label_reg.setText("")
+        self.error_label_reg.setAlignment(QtCore.Qt.AlignCenter)
+        self.error_label_reg.setWordWrap(True)
+        self.error_label_reg.setObjectName("error_label_reg")
+        self.user_icon_2 = QtWidgets.QLabel(self.widget_2)
+        self.user_icon_2.setGeometry(QtCore.QRect(45, 130, 40, 40))
+        self.user_icon_2.setObjectName("user_icon_2")
+        self.pass_icon_2 = QtWidgets.QLabel(self.widget_2)
+        self.pass_icon_2.setGeometry(QtCore.QRect(45, 190, 40, 40))
+        self.pass_icon_2.setObjectName("pass_icon_2")
+        self.regisrtation_button = QtWidgets.QPushButton(self.widget_2)
+        self.regisrtation_button.setGeometry(QtCore.QRect(180, 350, 140, 40))
+        self.regisrtation_button.setStyleSheet("border-radius: 15px;\n"
+"font: 14pt \"Involve\";\n"
+"background-color: rgb(34, 34, 59);\n"
+"color: rgb(229, 152, 155);")
+        self.regisrtation_button.setObjectName("regisrtation_button")
+        self.back_button_reg = QtWidgets.QPushButton(self.widget_2)
+        self.back_button_reg.setGeometry(QtCore.QRect(180, 400, 140, 40))
+        self.back_button_reg.setStyleSheet("border-radius: 15px;\n"
+"font: 14pt \"Involve\";\n"
+"background-color: rgb(34, 34, 59);\n"
+"color: rgb(229, 152, 155);")
+        self.back_button_reg.setObjectName("back_button_reg")
+        self.logo_icon_3 = QtWidgets.QLabel(self.reg_page)
+        self.logo_icon_3.setGeometry(QtCore.QRect(40, 40, 50, 50))
+        self.logo_icon_3.setObjectName("logo_icon_3")
+        self.logo_3 = QtWidgets.QLabel(self.reg_page)
+        self.logo_3.setGeometry(QtCore.QRect(90, 40, 240, 50))
+        self.logo_3.setObjectName("logo_3")
+        self.stacked_widget.addWidget(self.reg_page)
+        self.page = QtWidgets.QWidget()
+        self.page.setObjectName("page")
+        self.stacked_widget.addWidget(self.page)
+        self.page_2 = QtWidgets.QWidget()
+        self.page_2.setObjectName("page_2")
+        self.stacked_widget.addWidget(self.page_2)
         MainMenuWindow.setCentralWidget(self.main_widget)
 
         self.retranslateUi(MainMenuWindow)
@@ -198,6 +264,15 @@ class Ui_MainMenuWindow(object):
         self.login_button.setText(_translate("MainMenuWindow", "Войти"))
         self.back_button.setText(_translate("MainMenuWindow", "Назад"))
         self.logo_2.setText(_translate("MainMenuWindow", "<html><head/><body><p><img src=\":/logo/app_name_horizontal_350x50.png\"/></p></body></html>"))
+        self.welcome_word_3.setText(_translate("MainMenuWindow", "Регистрация"))
+        self.login_input_reg.setPlaceholderText(_translate("MainMenuWindow", " логин"))
+        self.password_input_reg.setPlaceholderText(_translate("MainMenuWindow", " пароль"))
+        self.user_icon_2.setText(_translate("MainMenuWindow", "<html><head/><body><p><img src=\":/icons/user_icon.png\"/></p></body></html>"))
+        self.pass_icon_2.setText(_translate("MainMenuWindow", "<html><head/><body><p><img src=\":/icons/pass_icon.png\"/></p></body></html>"))
+        self.regisrtation_button.setText(_translate("MainMenuWindow", "Сохранить"))
+        self.back_button_reg.setText(_translate("MainMenuWindow", "Назад"))
+        self.logo_icon_3.setText(_translate("MainMenuWindow", "<html><head/><body><p><img src=\":/icons/logo_icon_50x50.png\"/></p></body></html>"))
+        self.logo_3.setText(_translate("MainMenuWindow", "<html><head/><body><p><img src=\":/logo/app_name_horizontal_350x50.png\"/></p></body></html>"))
 import main_menu_logo_rc
 
 
