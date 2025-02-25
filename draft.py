@@ -154,6 +154,10 @@ class MainMenu(QMainWindow):
     def go_to_login(self):
         logger.info(f"Открытие страницы входа в профиль")
         self.ui.stacked_widget.setCurrentIndex(1)
+        # Очистка всех полей
+        self.ui.login_input.clear()
+        self.ui.password_input.clear()
+        self.ui.error_label.setText("")
 
         # Страница входа в профиль - страница с вводом логина и пароля пользователя
 
@@ -224,6 +228,10 @@ class MainMenu(QMainWindow):
     def go_to_register(self):
         logger.info(f"Открытие страницы регистрации")
         self.ui.stacked_widget.setCurrentIndex(2)
+        # Очистка всех полей
+        self.ui.login_input_reg.clear()
+        self.ui.password_input_reg.clear()
+        self.ui.error_label_reg.setText("")
 
         # Страница регистрации
 
