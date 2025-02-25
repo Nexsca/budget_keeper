@@ -227,3 +227,77 @@ class RegisterPage(QMainWindow):
         self.main_menu = MainMenu()
         self.main_menu.show()
         self.close()
+
+
+# Страница анкеты
+class AnketaPage(QMainWindow):
+    def __init__(self, user_id):
+        super().__init__()
+
+        # Устанавливаем иконку для окна
+        self.setWindowIcon(QIcon('content/app_icon.ico'))
+
+        # Для работы с бд
+        self.db_conn = DatabaseConn()
+
+        # Импортируем интерфейс
+        self.ui = Ui_AnketaPageWindow()
+        self.ui.setupUi(self)
+
+        # Для директивного обращения к странице
+        self.user_id = user_id
+
+        # Коннект кнопки для сохранения
+        self.ui.save_button.clicked.connect(self.save_anketa_data)
+
+    # Сохранение данных пользователя
+    def save_anketa_data(self):
+        first_name = self.ui.firstname.text()
+        sur_name = self.ui.surname.text()
+        not_parsed_income = self.ui.total_income.text()
+        logger.info(f"Выполняется сохранение данных нового пользователя")
+
+        if not first_name:
+            self.ui.error_label.setText(f"Введи, пожалуйста, своё имя")
+            logger.error(f"Неуспешная попытка сохранения: не введено имя пользователя")
+            return
+
+        # Если доход введён, парсим при необходимости
+        if not_parsed_income:
+            parsed_income = pars_value(not_parsed_income)
+
+            # Проверка результата парсинга
+            if parsed_income == -2:
+                self.ui.error_label.setText(f"Похоже, ты ввёл некорректное значение дохода, вот пример: 10000,00")
+                return
+            elif parsed_income == -1:
+                self.ui.error_label.setText(f"Похоже, возникла ошибка обработки, обратись к администратору")
+                return
+        else:
+            parsed_income = not_parsed_income
+
+        # Сохраняем данные пользователя в базе данных
+        try:
+            query = "update user_data set first_name = ?, last_name = ?, current_income = ? where user_id = ?"
+            self.db_conn.execute_query(query, params=(first_name, sur_name, parsed_income, self.user_id))
+            logger.info(f"Анкета пользователя успешно сохранена: "
+                        f"id: '{self.user_id}', "
+                        f"имя: '{first_name}', "
+                        f"фамилия: '{sur_name}', "
+                        f"текущий доход: '{parsed_income}'")
+            self.ui.error_label.setText(f"Анкета пользователя успешно сохранена")
+            QTimer.singleShot(1800, self.welcome_after_delay)
+        except Exception as syserr6:
+            logger.error(f"Ошибка сохранения анкеты пользователя в базе данных, "
+                         f"имя: '{first_name}', "
+                         f"фамилия: '{sur_name}', "
+                         f"текущий доход: '{not_parsed_income}', "
+                         f"детали: '{syserr6}'")
+            self.ui.error_label.setText(f"Возникла ошибка базы данных, обратись к администратору")
+
+    # Метод для перехода к странице с приветствием после задержки
+    def welcome_after_delay(self):
+        logger.info(f"Открытие приветственной страницы для пользователя: '{self.user_id}'")
+        self.main_page = WelcomePage(self.user_id)
+        self.main_page.show()
+        self.close()
