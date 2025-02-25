@@ -301,3 +301,29 @@ class AnketaPage(QMainWindow):
         self.main_page = WelcomePage(self.user_id)
         self.main_page.show()
         self.close()
+
+
+# Страница-приветствие
+class WelcomePage(QMainWindow):
+    def __init__(self, user_id):
+        super().__init__()
+
+        # Устанавливаем иконку для окна
+        self.setWindowIcon(QIcon('content/app_icon.ico'))
+
+        # Для директивного обращения к странице
+        self.user_id = user_id
+
+        # Импортируем интерфейс
+        self.ui = Ui_WelcomePageWindow()
+        self.ui.setupUi(self)
+
+        # Коннект кнопки для сохранения
+        self.ui.next_button.clicked.connect(self.go_next)
+
+    # Метод для перехода на страницу создания счетов пользователя
+    def go_next(self):
+        logger.info(f"Открытие страницы создания счетов для пользователя: '{self.user_id}'")
+        self.main_page = SetAccountPage(self.user_id)
+        self.main_page.show()
+        self.close()

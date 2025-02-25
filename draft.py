@@ -21,7 +21,6 @@ from PyQt5.QtWidgets import QAbstractItemView, QApplication, QDialog, QHBoxLayou
 from PyQt5.QtWidgets import QPushButton, QSizePolicy, QSpacerItem, QTableWidget, QTableWidgetItem, QVBoxLayout
 # Импорт UI, созданных в QtDesigner
 from main_menu_window import Ui_MainMenuWindow
-from welcome_page_window import Ui_WelcomePageWindow
 from set_account_page_window import Ui_SetAccountPage
 from main_page_window import Ui_MainPageWindow
 from confirm_page_window import Ui_ConfirmPageWindow
@@ -319,10 +318,12 @@ class MainMenu(QMainWindow):
         self.ui.regisrtation_button.clicked.connect(register_user)
         self.ui.back_button_reg.clicked.connect(self.back_to_main)
 
-    # Страница анкеты пользователя
+    # Метод для перехода к странице анкеты после задержки
     def anketa_after_delay(self):
         logger.info(f"Открытие страницы анкеты для пользователя: '{self.user_id}'")
         self.ui.stacked_widget.setCurrentIndex(3)
+
+        # Страница анкеты
 
         # Сохранение данных пользователя
         def save_anketa_data():
@@ -361,7 +362,7 @@ class MainMenu(QMainWindow):
                             f"фамилия: '{sur_name}', "
                             f"текущий доход: '{parsed_income}'")
                 self.ui.error_label_ank.setText(f"Анкета пользователя успешно сохранена")
-                QTimer.singleShot(1800, welcome_after_delay)
+                QTimer.singleShot(1800, self.welcome_after_delay)
             except Exception as syserr6:
                 logger.error(f"Ошибка сохранения анкеты пользователя в базе данных, "
                              f"имя: '{first_name}', "
@@ -370,36 +371,15 @@ class MainMenu(QMainWindow):
                              f"детали: '{syserr6}'")
                 self.ui.error_label_ank.setText(f"Возникла ошибка базы данных, обратись к администратору")
 
-        # Метод для перехода к странице с приветствием после задержки
-        def welcome_after_delay():
-            logger.info(f"Открытие приветственной страницы для пользователя: '{self.user_id}'")
-            self.main_page = WelcomePage(self.user_id)
-            self.main_page.show()
-            self.close()
-
         # Коннект кнопки для сохранения
         self.ui.save_button.clicked.connect(save_anketa_data)
 
-    # Метод для возврата в главное меню
-    def back_to_main(self):
-        logger.info(f"Возврат в меню")
-        self.ui.stacked_widget.setCurrentIndex(0)
+    # Метод для перехода к странице с приветствием после задержки
+    def welcome_after_delay(self):
+        logger.info(f"Открытие приветственной страницы для пользователя: '{self.user_id}'")
+        self.ui.stacked_widget.setCurrentIndex(4)
 
-
-# Страница-приветствие
-class WelcomePage(QMainWindow):
-    def __init__(self, user_id):
-        super().__init__()
-
-        # Устанавливаем иконку для окна
-        self.setWindowIcon(QIcon('content/app_icon.ico'))
-
-        # Для директивного обращения к странице
-        self.user_id = user_id
-
-        # Импортируем интерфейс
-        self.ui = Ui_WelcomePageWindow()
-        self.ui.setupUi(self)
+        # Страница-приветствие
 
         # Коннект кнопки для сохранения
         self.ui.next_button.clicked.connect(self.go_next)
@@ -410,6 +390,11 @@ class WelcomePage(QMainWindow):
         self.main_page = SetAccountPage(self.user_id)
         self.main_page.show()
         self.close()
+
+    # Метод для возврата в главное меню
+    def back_to_main(self):
+        logger.info(f"Возврат в меню")
+        self.ui.stacked_widget.setCurrentIndex(0)
 
 
 # Страница для создания счетов пользователя
