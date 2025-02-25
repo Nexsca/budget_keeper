@@ -230,12 +230,79 @@ class Ui_MainMenuWindow(object):
         self.logo_3.setGeometry(QtCore.QRect(90, 40, 240, 50))
         self.logo_3.setObjectName("logo_3")
         self.stacked_widget.addWidget(self.reg_page)
-        self.page = QtWidgets.QWidget()
-        self.page.setObjectName("page")
-        self.stacked_widget.addWidget(self.page)
+        self.anketa_page = QtWidgets.QWidget()
+        self.anketa_page.setObjectName("anketa_page")
+        self.logo_4 = QtWidgets.QLabel(self.anketa_page)
+        self.logo_4.setGeometry(QtCore.QRect(90, 40, 240, 50))
+        self.logo_4.setObjectName("logo_4")
+        self.widget_3 = QtWidgets.QWidget(self.anketa_page)
+        self.widget_3.setGeometry(QtCore.QRect(175, 210, 750, 500))
+        self.widget_3.setStyleSheet("border-radius: 15px;\n"
+"background-color: rgb(255, 255, 255);\n"
+"")
+        self.widget_3.setObjectName("widget_3")
+        self.anketa_word = QtWidgets.QLabel(self.widget_3)
+        self.anketa_word.setGeometry(QtCore.QRect(285, 20, 180, 40))
+        self.anketa_word.setStyleSheet("color: rgb(34, 34, 59);\n"
+"font: 24pt \"Involve\";")
+        self.anketa_word.setAlignment(QtCore.Qt.AlignCenter)
+        self.anketa_word.setObjectName("anketa_word")
+        self.firstname = QtWidgets.QLineEdit(self.widget_3)
+        self.firstname.setGeometry(QtCore.QRect(265, 160, 350, 40))
+        self.firstname.setStyleSheet("background-color: rgb(242, 233, 228);\n"
+"font: 14pt \"Involve\";\n"
+"color: rgb(34, 34, 59);")
+        self.firstname.setAlignment(QtCore.Qt.AlignLeading|QtCore.Qt.AlignLeft|QtCore.Qt.AlignVCenter)
+        self.firstname.setObjectName("firstname")
+        self.surname = QtWidgets.QLineEdit(self.widget_3)
+        self.surname.setGeometry(QtCore.QRect(265, 220, 350, 40))
+        self.surname.setStyleSheet("background-color: rgb(242, 233, 228);\n"
+"font: 14pt \"Involve\";\n"
+"color: rgb(34, 34, 59);")
+        self.surname.setEchoMode(QtWidgets.QLineEdit.Normal)
+        self.surname.setObjectName("surname")
+        self.error_label_ank = QtWidgets.QLabel(self.widget_3)
+        self.error_label_ank.setGeometry(QtCore.QRect(130, 330, 490, 50))
+        self.error_label_ank.setStyleSheet("font: 12pt \"Involve\";\n"
+"color: rgb(181, 131, 141);")
+        self.error_label_ank.setText("")
+        self.error_label_ank.setAlignment(QtCore.Qt.AlignCenter)
+        self.error_label_ank.setWordWrap(True)
+        self.error_label_ank.setObjectName("error_label_ank")
+        self.save_button = QtWidgets.QPushButton(self.widget_3)
+        self.save_button.setGeometry(QtCore.QRect(305, 420, 140, 40))
+        self.save_button.setStyleSheet("border-radius: 15px;\n"
+"font: 14pt \"Involve\";\n"
+"background-color: rgb(34, 34, 59);\n"
+"color: rgb(229, 152, 155);")
+        self.save_button.setObjectName("save_button")
+        self.anketa_icon = QtWidgets.QLabel(self.widget_3)
+        self.anketa_icon.setGeometry(QtCore.QRect(125, 160, 110, 160))
+        self.anketa_icon.setObjectName("anketa_icon")
+        self.info_label = QtWidgets.QLabel(self.widget_3)
+        self.info_label.setGeometry(QtCore.QRect(100, 70, 550, 30))
+        self.info_label.setStyleSheet("font: 12pt \"Involve\";\n"
+"color: rgb(34, 34, 59);")
+        self.info_label.setAlignment(QtCore.Qt.AlignCenter)
+        self.info_label.setWordWrap(True)
+        self.info_label.setObjectName("info_label")
+        self.total_income = QtWidgets.QLineEdit(self.widget_3)
+        self.total_income.setGeometry(QtCore.QRect(265, 280, 350, 40))
+        self.total_income.setStyleSheet("background-color: rgb(242, 233, 228);\n"
+"font: 14pt \"Involve\";\n"
+"color: rgb(34, 34, 59);")
+        self.total_income.setEchoMode(QtWidgets.QLineEdit.Normal)
+        self.total_income.setObjectName("total_income")
+        self.logo_icon_4 = QtWidgets.QLabel(self.anketa_page)
+        self.logo_icon_4.setGeometry(QtCore.QRect(40, 40, 50, 50))
+        self.logo_icon_4.setObjectName("logo_icon_4")
+        self.stacked_widget.addWidget(self.anketa_page)
         self.page_2 = QtWidgets.QWidget()
         self.page_2.setObjectName("page_2")
         self.stacked_widget.addWidget(self.page_2)
+        self.page = QtWidgets.QWidget()
+        self.page.setObjectName("page")
+        self.stacked_widget.addWidget(self.page)
         MainMenuWindow.setCentralWidget(self.main_widget)
 
         self.retranslateUi(MainMenuWindow)
@@ -273,6 +340,15 @@ class Ui_MainMenuWindow(object):
         self.back_button_reg.setText(_translate("MainMenuWindow", "Назад"))
         self.logo_icon_3.setText(_translate("MainMenuWindow", "<html><head/><body><p><img src=\":/icons/logo_icon_50x50.png\"/></p></body></html>"))
         self.logo_3.setText(_translate("MainMenuWindow", "<html><head/><body><p><img src=\":/logo/app_name_horizontal_350x50.png\"/></p></body></html>"))
+        self.logo_4.setText(_translate("MainMenuWindow", "<html><head/><body><p><img src=\":/logo/app_name_horizontal_350x50.png\"/></p></body></html>"))
+        self.anketa_word.setText(_translate("MainMenuWindow", "Анкета"))
+        self.firstname.setPlaceholderText(_translate("MainMenuWindow", " имя"))
+        self.surname.setPlaceholderText(_translate("MainMenuWindow", " фамилия"))
+        self.save_button.setText(_translate("MainMenuWindow", "Сохранить"))
+        self.anketa_icon.setText(_translate("MainMenuWindow", "<html><head/><body><p><img src=\":/icons/anketa_icon.png\"/></p></body></html>"))
+        self.info_label.setText(_translate("MainMenuWindow", "Твои данные помогут нам настроить приложение именно под тебя"))
+        self.total_income.setPlaceholderText(_translate("MainMenuWindow", " текущий доход"))
+        self.logo_icon_4.setText(_translate("MainMenuWindow", "<html><head/><body><p><img src=\":/icons/logo_icon_50x50.png\"/></p></body></html>"))
 import main_menu_logo_rc
 
 
