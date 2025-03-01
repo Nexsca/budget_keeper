@@ -21,7 +21,6 @@ from PyQt5.QtWidgets import QAbstractItemView, QApplication, QDialog, QHBoxLayou
 from PyQt5.QtWidgets import QPushButton, QSizePolicy, QSpacerItem, QTableWidget, QTableWidgetItem, QVBoxLayout
 # Импорт UI, созданных в QtDesigner
 from main_menu_window import Ui_MainMenuWindow
-from set_account_page_window import Ui_SetAccountPage
 from main_page_window import Ui_MainPageWindow
 from confirm_page_window import Ui_ConfirmPageWindow
 from new_month_window import Ui_NewMonthWindow
@@ -315,7 +314,7 @@ class MainMenu(QMainWindow):
                 self.ui.error_label_reg.setText(f"Возникла ошибка базы данных, обратись к администратору")
 
         # Коннект кнопок для регистрации и возврата в меню
-        self.ui.regisrtation_button.clicked.connect(register_user)
+        self.ui.registration_button.clicked.connect(register_user)
         self.ui.back_button_reg.clicked.connect(self.back_to_main)
 
     # Метод для перехода к странице анкеты после задержки
@@ -382,124 +381,102 @@ class MainMenu(QMainWindow):
         # Страница-приветствие
 
         # Коннект кнопки для сохранения
-        self.ui.next_button.clicked.connect(self.go_next)
+        self.ui.next_button.clicked.connect(self.go_to_set_account_page)
 
     # Метод для перехода на страницу создания счетов пользователя
-    def go_next(self):
+    def go_to_set_account_page(self):
         logger.info(f"Открытие страницы создания счетов для пользователя: '{self.user_id}'")
-        self.main_page = SetAccountPage(self.user_id)
-        self.main_page.show()
-        self.close()
+        self.ui.stacked_widget.setCurrentIndex(5)
 
-    # Метод для возврата в главное меню
-    def back_to_main(self):
-        logger.info(f"Возврат в меню")
-        self.ui.stacked_widget.setCurrentIndex(0)
+        # Страница для создания счетов пользователя
 
+        # Метод для сохранения счетов пользователя
+        def save_accounts():
+            accounts_data = []
+            logger.info(f"Выполняется попытка сохранения счетов пользователя: '{self.user_id}'")
 
-# Страница для создания счетов пользователя
-class SetAccountPage(QMainWindow):
-    def __init__(self, user_id):
-        super().__init__()
+            for account_form in self.ui.account_forms:
+                account_username = account_form["name_input"].text()
+                account_type_name = account_form["type_dropdown"].currentText()
 
-        # Устанавливаем иконку для окна
-        self.setWindowIcon(QIcon('content/app_icon.ico'))
+                # В случае незаполнения какого-либо поля, выводим предупреждение
+                if not account_username:
+                    logger.warning(f"Неуспешная попытка сохранения: не заполнено наименование счёта")
+                    self.ui.error_label_setacnt.setText(f"Похоже, ты не заполнил все наименования счёта, "
+                                                        f"заполни и попробуй снова")
+                    return
 
-        # Для работы с бд
-        self.db_conn = DatabaseConn()
+                # Собираем данные для записи
+                accounts_data.append({
+                    "user_id": self.user_id,
+                    "account_username": account_username,
+                    "account_type_name": account_type_name
+                })
 
-        # Для директивного обращения к странице
-        self.user_id = user_id
+            # Информационное окно для пользователя
+            self.ui.error_label_setacnt.setText(f"Подожди, пожалуйста, выполняется сохранение твоих счетов")
 
-        # Импортируем интерфейс
-        self.ui = Ui_SetAccountPage()
-        self.ui.setupUi(self)
+            # Если данные валидны, сохраняем их в базу данных
+            try:
+                # Задаём даты создания, деактивации и апдейта счёта (заглушка)
+                create_date = datetime.now().strftime("%Y-%m-%d %H:%M:%S")
+                deactivate_date = "9999-12-12 23:59:59"
+                update_date = datetime.now().strftime("%Y-%m-%d %H:%M:%S")
 
-        # Коннект кнопки для сохранения
-        self.ui.save_button.clicked.connect(self.save_accounts)
+                # Выполняем сохранение данных по счетам последовательно, для каждого отдельно
+                for account in accounts_data:
+                    user_id = account["user_id"]
+                    account_username = account["account_username"]
+                    account_type_name = account["account_type_name"]
 
-    # Метод для сохранения счетов пользователя
-    def save_accounts(self):
-        accounts_data = []
-        logger.info(f"Выполняется попытка сохранения счетов пользователя: '{self.user_id}'")
+                    # Собираем дополнительные данные по счёту из справочника
+                    account_type_code = get_acc_type_code(account_type_name)
+                    account_type = get_acc_type(account_type_code)
+                    logger.info(f"Успешное получение дополнительных данных по счёту "
+                                f"из справочника: '{account_username}'")
 
-        for account_form in self.ui.account_forms:
-            account_username = account_form["name_input"].text()
-            account_type_name = account_form["type_dropdown"].currentText()
+                    # Записываем в базу данных
+                    insert_query = ("insert into user_account "
+                                    "(user_id, account_name, account_type_name, account_type, "
+                                    "account_type_code, create_date, deactivate_date, update_date) "
+                                    "values (?, ?, ?, ?, ?, ?, ?, ?);")
+                    self.db_conn.execute_query(insert_query,
+                                               params=(user_id, account_username, account_type_name, account_type,
+                                                       account_type_code, create_date, deactivate_date, update_date))
 
-            # В случае незаполнения какого-либо поля, выводим предупреждение
-            if not account_username:
-                logger.warning(f"Неуспешная попытка сохранения: не заполнено наименование счёта")
-                self.ui.error_label.setText(f"Похоже, ты не заполнил все наименования счёта, заполни и попробуй снова")
+                # После успешного сохранения информируем пользователя и переходим к главной странице
+                logger.info(f"Выполнено успешное сохранение счетов пользователя в базу данных")
+                self.ui.error_label_setacnt.setText(f"Твои счета были успешно сохранены")
+
+                # Открываем главную страницу после небольшой задержки
+                QTimer.singleShot(1800, self.main_page_after_delay)
+            except Exception as syserr12:
+                logger.error(f"Возникла ошибка при сохранении счетов пользователя, "
+                             f"user_id: '{self.user_id}', "
+                             f"детали: '{syserr12}'")
+                self.ui.error_label_setacnt.setText(f"Возникла непредвиденная ошибка, обратись к администратору")
                 return
 
-            # Собираем данные для записи
-            accounts_data.append({
-                "user_id": self.user_id,
-                "account_username": account_username,
-                "account_type_name": account_type_name
-            })
+        # Забираем код типа счёта
+        def get_acc_type_code(account_type_name):
+            query = "select account_type_code from account_type where account_type_name = ?"
+            result = self.db_conn.execute_query(query, params=(account_type_name,), fetchone=True)
+            if result:
+                return result[0]
+            else:
+                return None
 
-        # Информационное окно для пользователя
-        self.ui.error_label.setText(f"Подожди, пожалуйста, выполняется сохранение твоих счетов")
+        # Забираем тип счёта
+        def get_acc_type(account_type_code):
+            query = "select account_type from account_type where account_type_code = ?"
+            result = self.db_conn.execute_query(query, params=(account_type_code,), fetchone=True)
+            if result:
+                return result[0]
+            else:
+                return None
 
-        # Если данные валидны, сохраняем их в базу данных
-        try:
-            # Задаём даты создания, деактивации и апдейта счёта (заглушка)
-            create_date = datetime.now().strftime("%Y-%m-%d %H:%M:%S")
-            deactivate_date = "9999-12-12 23:59:59"
-            update_date = datetime.now().strftime("%Y-%m-%d %H:%M:%S")
-
-            # Выполняем сохранение данных по счетам последовательно, для каждого отдельно
-            for account in accounts_data:
-                user_id = account["user_id"]
-                account_username = account["account_username"]
-                account_type_name = account["account_type_name"]
-
-                # Собираем дополнительные данные по счёту из справочника
-                account_type_code = self.get_acc_type_code(account_type_name)
-                account_type = self.get_acc_type(account_type_code)
-                logger.info(f"Успешное получение дополнительных данных по счёту из справочника: '{account_username}'")
-
-                # Записываем в базу данных
-                insert_query = ("insert into user_account "
-                                "(user_id, account_name, account_type_name, account_type, "
-                                "account_type_code, create_date, deactivate_date, update_date) "
-                                "values (?, ?, ?, ?, ?, ?, ?, ?);")
-                self.db_conn.execute_query(insert_query,
-                                           params=(user_id, account_username, account_type_name, account_type,
-                                                   account_type_code, create_date, deactivate_date, update_date))
-
-            # После успешного сохранения информируем пользователя и переходим к главной странице
-            logger.info(f"Выполнено успешное сохранение счетов пользователя в базу данных")
-            self.ui.error_label.setText(f"Твои счета были успешно сохранены")
-
-            # Открываем главную страницу после небольшой задержки
-            QTimer.singleShot(1800, self.main_page_after_delay)
-        except Exception as syserr12:
-            logger.error(f"Возникла ошибка при сохранении счетов пользователя, "
-                         f"user_id: '{self.user_id}', "
-                         f"детали: '{syserr12}'")
-            self.ui.error_label.setText(f"Возникла непредвиденная ошибка, обратись к администратору")
-            return
-
-    # Забираем код типа счёта
-    def get_acc_type_code(self, account_type_name):
-        query = "select account_type_code from account_type where account_type_name = ?"
-        result = self.db_conn.execute_query(query, params=(account_type_name,), fetchone=True)
-        if result:
-            return result[0]
-        else:
-            return None
-
-    # Забираем тип счёта
-    def get_acc_type(self, account_type_code):
-        query = "select account_type from account_type where account_type_code = ?"
-        result = self.db_conn.execute_query(query, params=(account_type_code,), fetchone=True)
-        if result:
-            return result[0]
-        else:
-            return None
+        # Коннект кнопки для сохранения
+        self.ui.save_button_setact.clicked.connect(save_accounts)
 
     # Метод для перехода к главной странице после задержки
     def main_page_after_delay(self):
@@ -507,6 +484,11 @@ class SetAccountPage(QMainWindow):
         self.main_page = MainPage(self.user_id)
         self.main_page.show()
         self.close()
+
+    # Метод для возврата в главное меню
+    def back_to_main(self):
+        logger.info(f"Возврат в меню")
+        self.ui.stacked_widget.setCurrentIndex(0)
 
 
 # Класс для отображения графика - холст
